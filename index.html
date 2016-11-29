@@ -1,15 +1,104 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>无标题文档</title>
-</head>
+<html ng-app="app" ng-controller="controller">
+    <head>
+        <meta charset="utf-8">
+            <meta name="format-detection" content="telephone=no">
+                <meta name="msapplication-tap-highlight" content="no">
+                    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+                        <title></title>
+                        <link href="css/iconfont.css" rel="stylesheet" rev="stylesheet" type="text/css">
+                            <link href="css/main.css" rel="stylesheet" rev="stylesheet" type="text/css">
+                                <script type="text/javascript" src="js/angular.min.js"></script>
+                                <script type="text/javascript" src="js/angular-touch.min.js"></script>
+                                <script type="text/javascript">var picOnLoad=function(){}</script>
+                                <style>
+                                #illegal_page .illegal{
+                                    width:100%;
+                                    background-color:#fff;
+                                    margin-bottom:20px;}
+                                #illegal_page .illegalTop{
+                                    height:144px;
+                                    width:100%;
+                                    border-bottom:1px solid #dfdfdf;}
+                                #illegal_page .illegalTop img{
+                                    width:76px;
+                                    height:76px;
+                                    float:left;
+                                    margin-left:28px;
+                                    margin-top:32px;}
+                                #illegal_page .illegalName{
+                                    float:left;
+                                    line-height:144px;
+                                    margin-left:25px;
+                                    font-size:26px;}
+                                #illegal_page .illegalBottom{
+                                    width:100%;
+                                    height:142px;
+                                    border-bottom:1px solid #dfdfdf;
+                                }
+                                #illegal_page .illegalPoint{
+                                    width:33.33%;
+                                    height:90px;
+                                    border-right:1px solid #d7d7d7;
+                                    float:left;
+                                    margin-top:27px;}
+                                #illegal_page .illegalPoint.last{
+                                    border:0px;}
+                                #illegal_page .illegalPoint .title{
+                                    text-align:center;
+                                    padding-top:7px;
+                                    font-size:22px;}
+                                #illegal_page .illegalPoint .number{
+                                    text-align:center;
+                                    margin-top:16px;
+                                    font-size:26px;
+                                    color:#ff4600;
+                                }
+                                #illegal_buttom{
+                                    width:100%;
+                                    text-align:center;
+                                }
+                                #illegal_buttom button{
+                                    margin:auto;
+                                    border:1px solid #c0bec1;
+                                    width:138px;
+                                    height:42px;
+                                    text-align:center;
+                                    line-height:42px;
+                                    margin-bottom:20px;
+                                    background-color:#fff;}
+                                #illegal_buttom .dsc{
+                                    width:100%;
+                                    text-align:center;
+                                    font-size:21px;
+                                }
+                                </style>
+    </head>
+    <body style="height: {{getH}}px;">
+        <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
+            <div id="loading" style="display: none;">
+                <div class="an iconfont">  </div>
+            </div>
+            <div id="main">
+            </div>
+        </div>
+        <div class="clear"></div>
+        <script type="text/javascript" src="js/socketIo.js"></script>
+        <script type="text/javascript">
+            angular.module('app', []).controller('controller', ['$scope','$window','$timeout',function($scope,$window,$timeout) {
+                //自适应用
+                $scope.scale = $window.innerWidth/750;
+                $window.onresize=function(){
+                   $scope.scale = $window.innerWidth/750;
+                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale;
+                    $scope.$apply();
+                }
+                //数据
+                $scope.data=[];
+                $timeout(function(){
+                   $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
+                },300);
+            }]);
 
-<body>
-</body>
+        </script>
+    </body>
 </html>
-<!--[if lte IE 7]>
-<script type="text/javascript" src="js/json.js"></script>
-<![endif]-->
-<script type="text/javascript" src="js/socketIo.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
