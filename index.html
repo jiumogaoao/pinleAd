@@ -5,80 +5,56 @@
                 <meta name="msapplication-tap-highlight" content="no">
                     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
                         <title></title>
-                        <link href="css/iconfont.css" rel="stylesheet" rev="stylesheet" type="text/css">
                             <link href="css/main.css" rel="stylesheet" rev="stylesheet" type="text/css">
                                 <script type="text/javascript" src="js/angular.min.js"></script>
                                 <script type="text/javascript" src="js/angular-touch.min.js"></script>
-                                <script type="text/javascript">var picOnLoad=function(){}</script>
-                                <style>
-                                #illegal_page .illegal{
-                                    width:100%;
-                                    background-color:#fff;
-                                    margin-bottom:20px;}
-                                #illegal_page .illegalTop{
-                                    height:144px;
-                                    width:100%;
-                                    border-bottom:1px solid #dfdfdf;}
-                                #illegal_page .illegalTop img{
-                                    width:76px;
-                                    height:76px;
-                                    float:left;
-                                    margin-left:28px;
-                                    margin-top:32px;}
-                                #illegal_page .illegalName{
-                                    float:left;
-                                    line-height:144px;
-                                    margin-left:25px;
-                                    font-size:26px;}
-                                #illegal_page .illegalBottom{
-                                    width:100%;
-                                    height:142px;
-                                    border-bottom:1px solid #dfdfdf;
-                                }
-                                #illegal_page .illegalPoint{
-                                    width:33.33%;
-                                    height:90px;
-                                    border-right:1px solid #d7d7d7;
-                                    float:left;
-                                    margin-top:27px;}
-                                #illegal_page .illegalPoint.last{
-                                    border:0px;}
-                                #illegal_page .illegalPoint .title{
-                                    text-align:center;
-                                    padding-top:7px;
-                                    font-size:22px;}
-                                #illegal_page .illegalPoint .number{
-                                    text-align:center;
-                                    margin-top:16px;
-                                    font-size:26px;
-                                    color:#ff4600;
-                                }
-                                #illegal_buttom{
-                                    width:100%;
-                                    text-align:center;
-                                }
-                                #illegal_buttom button{
-                                    margin:auto;
-                                    border:1px solid #c0bec1;
-                                    width:138px;
-                                    height:42px;
-                                    text-align:center;
-                                    line-height:42px;
-                                    margin-bottom:20px;
-                                    background-color:#fff;}
-                                #illegal_buttom .dsc{
-                                    width:100%;
-                                    text-align:center;
-                                    font-size:21px;
-                                }
+                                <style type="text/css">
+                                		.space{
+                                			width: 1px;
+                                			height: 1px;
+                                		}
+                                		.input_module{
+                                			width: 700px;
+                                			height: 100px;
+                                			margin: auto;
+                                			margin-top: 20px;
+                                			background-color: #fff;
+                                			position: relative;
+                                		}
+                                		.input_module input{
+                                			position: absolute;
+                                			top: 0px;
+                                			left: 0px;
+                                			width: 100%;
+                                			height: 100%;
+                                			line-height: 100px;
+                                			font-size: 80px;
+                                			text-align: center;
+                                		}
+                                		.buttonL{
+                                			width: 700px;
+                                			height: 100px;
+                                			background-color: blue;
+                                			color: #fff;
+                                			font-size: 80px;
+                                			line-height: 100px;
+                                			text-align: center;
+                                			margin: auto;
+                                			margin-top: 20px;
+                                		}
                                 </style>
     </head>
     <body style="height: {{getH}}px;">
         <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
-            <div id="loading" style="display: none;">
-                <div class="an iconfont">  </div>
-            </div>
             <div id="main">
+            	<div class="space"></div>
+            	<div class="input_module">
+            		<input ng-model="data.name" placeholder="name" />
+            	</div>
+            	<div class="input_module">
+            		<input ng-model="data.key" placeholder="key" type="password"/>
+            	</div>
+            	<button class="buttonL" ng-click="send()">登录</button>
             </div>
         </div>
         <div class="clear"></div>
@@ -93,10 +69,35 @@
                     $scope.$apply();
                 }
                 //数据
-                $scope.data=[];
+                $scope.data={name:"",key:""};
                 $timeout(function(){
                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
                 },300);
+                //socket
+                var socket = io("http://127.0.0.1:8888");
+                socket.on('connected', function (data) {
+		            console.log(data);
+		            if(localStorage.getItem('tk')){
+		                socket.emit('tk',{tk:localStorage.getItem('tk')});
+		            }
+		        });
+		        socket.on('tk',function(data){
+		            if(data.tk){
+		                localStorage.setItem('tk',data.tk);
+		            }else{
+		                localStorage.removeItem('tk');
+		            }
+		        });
+		        socket.on('err',function(data){
+		            alert(data.errDsc);
+		        });
+		        socket.on('login',function(data){
+		        	window.location.href="nav";
+		        })
+		        //action
+		        $scope.send=function(){
+		        	socket.emit('server',{model:'admin',action:'login',data:$scope.data});
+		        };
             }]);
 
         </script>
