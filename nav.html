@@ -9,15 +9,23 @@
                                 <script type="text/javascript" src="js/angular.min.js"></script>
                                 <script type="text/javascript" src="js/angular-touch.min.js"></script>
                                 <style type="text/css">
-                                		
+                                	.nav{
+                                        width: 750px;
+                                        height: 100px;
+                                        background-color: #fff;
+                                        margin-bottom:20px;
+                                        line-height: 100px; 
+                                        text-align: center;
+                                        font-size: 30px;
+                                    }
                                 </style>
     </head>
     <body style="height: {{getH}}px;">
         <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
             <div id="main">
-            	<button ng-click="go(0)">管理员管理</button>
-                <button ng-click="go(1)">类型管理</button>
-                <button ng-click="go(2)">配置管理</button>
+            	<button class="nav" ng-click="go(0)">管理员管理</button>
+                <button class="nav" ng-click="go(1)">类型管理</button>
+                <button class="nav" ng-click="go(2)">配置管理</button>
             </div>
         </div>
         <div class="clear"></div>
@@ -37,7 +45,7 @@
                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
                 },300);
                 //socket
-                var socket = io("http://127.0.0.1:8888");
+                var socket = io("http://192.168.1.105:8888");
                 socket.on('connected', function (data) {
 		            console.log(data);
 		            if(localStorage.getItem('tk')){
@@ -56,15 +64,15 @@
 		        });
 		        //action
 		        $scope.go=function(num){
-		        	swich (num){
+		        	switch (num) {
                         case 0:
-                            window.location.href="adminManage";
+                            window.location.href="adminManage.html";
                             break;
                         case 1:
-                            window.location.href="typeManage";
+                            window.location.href="typeManage.html";
                             break;
                         case 2:
-                            window.location.href="configManage";
+                            window.location.href="configManage.html";
                             break;
                     }
 		        };

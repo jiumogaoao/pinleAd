@@ -9,20 +9,59 @@
                                 <script type="text/javascript" src="js/angular.min.js"></script>
                                 <script type="text/javascript" src="js/angular-touch.min.js"></script>
                                 <style type="text/css">
-                                		
+                                		.add{
+                                            width: 750px;
+                                            height: 100px;
+                                            background-color: #fff;
+                                            text-align: center;
+                                            font-size: 30px;
+                                            margin-bottom:20px; 
+                                        }
+                                        .point{
+                                            width: 750px;
+                                            height: 100px;
+                                            background-color: #fff;
+                                            text-align: center;
+                                            font-size: 30px;
+                                            margin-bottom:20px; 
+                                        }
+                                        .point input{
+                                            float: left;
+                                            width: 30%;
+                                            height: 100px;
+                                            line-height: 100px;
+                                            font-size: 30px;
+                                            text-align: center;
+                                        }
+                                        .point select{
+                                            float: left;
+                                            width: 30%;
+                                            height: 100px;
+                                            line-height: 100px;
+                                            font-size: 30px;
+                                            text-align: center;
+                                        }
+                                        .point button{
+                                            float: left;
+                                            width: 30%;
+                                            height: 100px;
+                                            line-height: 100px;
+                                            font-size: 30px;
+                                            text-align: center;
+                                        }
                                 </style>
     </head>
     <body style="height: {{getH}}px;">
         <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
             <div id="main">
-            	<button ng-click="add()">+添加</button>
+            	<button ng-click="add()" class="add">+添加</button>
                 <div class="list">
                     <div class="point" ng-repeat="n in data" pid="{{n._id}}">
-                        <input ng-model="n.name" ng-change="change(n._id)"/>
+                        <input ng-model="n.name" ng-blur="change(n._id)"/>
                         <select ng-model="n.type" ng-change="change(n._id)">
                             <option ng-repeat="t in config.adminType" value="{{$index}}">{{t}}</option>
                         </select>
-                        <button ng-click="change(n._id)">x</button>
+                        <button ng-click="remove(n._id)">x</button>
                         <div class="clear"></div>
                     </div>
                 </div>
@@ -46,7 +85,7 @@
                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
                 },300);
                 //socket
-                var socket = io("http://127.0.0.1:8888");
+                var socket = io("http://192.168.1.105:8888");
                 socket.on('connected', function (data) {
 		            console.log(data);
 		            if(localStorage.getItem('tk')){
@@ -69,17 +108,17 @@
                 });
                 socket.on('adminGet',function(data){
                     $scope.data=data;
-                    $apply();
+                    //$scope.$apply();
                 });
-                socket.on('adminAdd',function(data){
+                socket.on('adminAdd',function(data){console.log(data)
                     $scope.data.push(data);
-                    $apply();
+                    $scope.$apply();
                 })
                 socket.on('adminChange',function(data){
                     for(var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]['_id']==data['_id']){
                             $scope.data[i]=data;
-                            $apply();
+                            $scope.$apply();
                         }
                     }
                 })
@@ -91,7 +130,7 @@
                         }
                     }
                     $scope.data.splice(removeIndex,1);
-                    $apply();
+                    $scope.$apply();
                 });
 		        //action
 		        $scope.add=function(){
@@ -100,7 +139,7 @@
                 $scope.change=function(id){
                     for(var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]['_id']==id){
-                            socket.emit('server',{model:"admin",action:"change",data:$scope.data[i]});
+                           socket.emit('server',{model:"admin",action:"change",data:$scope.data[i]});
                         }
                     }
                 }
