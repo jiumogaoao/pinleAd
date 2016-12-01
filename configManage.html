@@ -15,9 +15,44 @@
     <body style="height: {{getH}}px;">
         <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
             <div id="main">
-            	<button>管理员管理</button>
-                <button>类型管理</button>
-                <button>配置管理</button>
+                <input id="versionNow" ng-model="version"/>
+                <button id="changeVersion" ng-click="changeVersion()">设置版本号</button>
+                <button id="addConfig" ng-click="addConfig()">添加配置版本+</button>
+                <div class="config" ng-repeat="list in data" cid="{{list._id}}">
+                    <input class="version" ng-model="list.version" ng-blur="changeConfig(list._id)"/>
+                    <div class="list">
+                        <button class="add" ng-click="adminTypeAdd(list._id)">添加管理员类型</button>
+                        <div class="point" ng-repeat="adminType in list.adminType">
+                           <input ng-model="adminType" ng-blur="changeConfig(list._id)"/>
+                           <button class="remove" ng-click="adminTypeRemove(list._id,$index)">X</button>
+                           <div class="clear"></div> 
+                        </div>
+                    </div>
+                    <div class="list">
+                        <button class="add" ng-click="expressAdd(list._id)">添加物流</button>
+                        <div class="point" ng-repeat="express in list.expressID">
+                           <input ng-model="express.name" ng-blur="changeConfig(list._id)"/>
+                           <button class="remove" ng-click="expressRemove(list._id,$index)">X</button>
+                           <div class="clear"></div> 
+                        </div>
+                    </div>
+                    <div class="list">
+                        <button class="add" ng-click="expressStateAdd(list._id)">添加物流状态</button>
+                        <div class="point" ng-repeat="expressState in list.expressState">
+                           <input ng-model="expressState" ng-blur="changeConfig(list._id)"/>
+                           <button class="remove" ng-click="expressStateRemove(list._id,$index)">X</button>
+                           <div class="clear"></div> 
+                        </div>
+                    </div>
+                    <div class="list">
+                        <button class="add" ng-click="userAdd(list._id)">添加用户类型</button>
+                        <div class="point" ng-repeat="user in list.userType">
+                           <input ng-model="user" ng-blur="changeConfig(list._id)"/>
+                           <button class="remove" ng-click="userRemove(list._id,$index)">X</button>
+                           <div class="clear"></div> 
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="clear"></div>
@@ -32,7 +67,8 @@
                     $scope.$apply();
                 }
                 //数据
-                $scope.data={name:"",key:""};
+                $scope.data=[];
+                $scope.version="";
                 $timeout(function(){
                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
                 },300);
@@ -47,6 +83,7 @@
 		        socket.on('tk',function(data){
 		            if(data.tk){
 		                localStorage.setItem('tk',data.tk);
+                        socket.emit('server',{model:'config',action:'get',data:{}});
 		            }else{
 		                localStorage.removeItem('tk');
 		            }
@@ -54,20 +91,113 @@
 		        socket.on('err',function(data){
 		            alert(data.errDsc);
 		        });
-		        //action
-		        $scope.go=function(num){
-		        	swich (num){
-                        case 0:
-                            window.location.href="adminManage";
-                            break;
-                        case 1:
-                            window.location.href="typeManage";
-                            break;
-                        case 2:
-                            window.location.href="configManage";
-                            break;
+                socket.on('config',function(data){
+                    $scope.version=data.version;
+                    $scope.$apply();
+                });
+                socket.on('configList',function(data){
+                    $scope.data=data;
+                    $scope.$apply();
+                });
+                socket.on('configAdd',function(data){
+                    $scope.data.push(data);
+                    $scope.$apply();
+                });
+                socket.on('configChange',function(data){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==data._id){
+                            $scope.data[i]=data;
+                            $scope.$apply();
+                        }
                     }
-		        };
+                });
+		        //action
+                $scope.addConfig=function(){
+                    var lastVersion=$scope.data[$scope.data.length-1];
+                    socket.emit('server',{model:'config',action:'add',data:{
+                          version:"new",
+                          adminType:lastVersion.adminType,
+                          expressID:lastVersion.expressID,
+                          expressState:lastVersion.expressState,
+                          provinceID:lastVersion.provinceID,
+                          cityID:lastVersion.cityID,
+                          userType:lastVersion.userType
+                      }});
+                }
+                $scope.changeConfig=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.adminTypeAdd=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].adminType.push("new");
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.expressAdd=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].expressID.push({id:"id"+(new Date().getTime()),name:"new"});
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.expressStateAdd=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].expressState.push("new");
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.userAdd=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].userType.push("new");
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.adminTypeRemove=function(id,index){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].adminType.splice(index,1);
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.expressRemove=function(id,index){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].expressID.splice(index,1);
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.expressStateRemove=function(id,index){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].expressState.splice(index,1);
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.userRemove=function(id,index){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].userType.splice(index,1);
+                            socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.changeVersion=function(){
+                    socket.emit('server',{model:'config',action:'versionSet',data:{version:$scope.version}});
+                }
             }]);
 
         </script>

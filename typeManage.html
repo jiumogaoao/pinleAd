@@ -15,9 +15,41 @@
     <body style="height: {{getH}}px;">
         <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
             <div id="main">
-            	<button>管理员管理</button>
-                <button>类型管理</button>
-                <button>配置管理</button>
+            	<button id="addType" ng-click="addType()">添加分类+</button>
+                <div class="list" ng-repeat="list in data" lid="{{list._id}}">
+                    <button class="remove" ng-click="removeList(list._id)">X</button>
+                    <div class="top">
+                        <img ng-src="list.icon"/>
+                        <div class="right">
+                            <input class="title" ng-model="list.name" ng-blur="changeList(list._id)"/>
+                            <textarea ng-model="list.dsc" ng-blur="changeList(list._id)"></textarea>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="bottom">
+                        <button class="addSubType" ng-click="addSubType(list._id)">添加子类+</button>
+                        <div class="point" ng-repeat="point in list.subType" lid="{{point.id}}">
+                            <input class="subTitle" ng-model="point.name" ng-blur="changeList(list._id)"/>
+                            <textarea ng-model="point.dsc" ng-blur="changeList(list._id)"></textarea>
+                            <div class="stateList">
+                                <button class="addState" ng-click="addState(list._id,point.id)">添加属性+</button>
+                                <div class="state" ng-repeat="state in point.state">
+                                    <input class="stateTitle" ng-model="state.title" ng-blur="changeList(list._id)"/>
+                                    <div class="parameterList">
+                                        <button class="parameterAdd" ng-click="addPara(list._id,point.id,state.id)">添加参数+</button>
+                                        <div class="parameter" ng-repeat="para in state.para">
+                                            <input ng-model="para.name" ng-blur="changeList(list._id)"/>
+                                            <button class="removeParameter" ng-click="removePara(list._id,point.id,state.id,para.id)">X</button>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+                                    <button class="removeState" ng-click="removeState(list._id,point.id,state.id)">X</button>
+                                </div>
+                            </div>
+                            <button class="removeSubType" ng-click="removeSubType(list._id,point.id)">X</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="clear"></div>
@@ -32,7 +64,7 @@
                     $scope.$apply();
                 }
                 //数据
-                $scope.data={name:"",key:""};
+                $scope.data=[];
                 $timeout(function(){
                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
                 },300);
@@ -51,23 +83,141 @@
 		                localStorage.removeItem('tk');
 		            }
 		        });
+                socket.on('type',function(data){
+                    $scope.data=data;
+                    $scope.$apply();
+                })
 		        socket.on('err',function(data){
 		            alert(data.errDsc);
 		        });
-		        //action
-		        $scope.go=function(num){
-		        	swich (num){
-                        case 0:
-                            window.location.href="adminManage";
-                            break;
-                        case 1:
-                            window.location.href="typeManage";
-                            break;
-                        case 2:
-                            window.location.href="configManage";
-                            break;
+                socket.on('typeAdd',function(data){
+                    $scope.data.push(data);
+                    $scope.$apply();
+                })
+                socket.on('typeRemove',function(data){
+                    var removeNum=0;
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==data._id){removeNum=i}
                     }
+                    $scope.data.splice(removeNum,1);
+                    $scope.$apply();
+                })
+                socket.on('typeChange',function(data){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==data._id){
+                            $scope.data[i]=data;
+                            $scope.$apply();
+                        }
+                    }
+                });
+		        //action
+		        $scope.addType=function(){
+		        	socket.emit('server',{model:'type',action:'add',data:{
+                        name:"",icon:"#",dsc:"",subType:[]
+                    }});
 		        };
+                $scope.removeList=function(id){
+                    socket.emit('server',{model:'type',action:'remove',data:{
+                        _id:id
+                    }});
+                }
+                $scope.changeList=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.addSubType=function(id){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==id){
+                            $scope.data[i].subType.push({id:"id"+(new Date().getTime()),name:"",dsc:"",state:[]});
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.removeSubType=function(list,point){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==list){
+                            var removeIndex=0;
+                            for (var o=0;o<$scope.data[i].subType.length;o++){
+                                if($scope.data[i].subType[o].id==point){
+                                    removeIndex=o;
+                                }
+                            }
+                            $scope.data[i].subType.splice(removeIndex,1);
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.addState=function(list,point){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==list){
+                            for (var o=0;o<$scope.data[i].subType.length;o++){
+                                if($scope.data[i].subType[o].id==point){
+                                    $scope.data[i].subType[o].state.push({id:"id"+(new Date().getTime()),title:"",para:[]});
+                                }
+                            }
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.removeState=function(list,point,state){
+                    var removeIndex=0;
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==list){
+                            for (var o=0;o<$scope.data[i].subType.length;o++){
+                                if($scope.data[i].subType[o].id==point){
+                                    for (var p=0;p<$scope.data[i].subType[o].state.length;p++){
+                                        if($scope.data[i].subType[o].state[p].id==state){
+                                            removeIndex=p;
+                                        }
+                                    }   
+                                }
+                            }
+                            $scope.data[i].subType[o].state.splice(removeIndex,1);
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.addPara=function(list,point,state){
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==list){
+                            for (var o=0;o<$scope.data[i].subType.length;o++){
+                                if($scope.data[i].subType[o].id==point){
+                                    for (var p=0;p<$scope.data[i].subType[o].state.length;p++){
+                                        if($scope.data[i].subType[o].state[p].id==state){
+                                            $scope.data[i].subType[o].state[p].para.push({id:"id"+(new Date().getTime()),name:""});
+                                        }
+                                    }
+                                }
+                            }
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
+                $scope.removePara=function(list,point,state,para){
+                    var removeIndex=0;
+                    for (var i=0;i<$scope.data.length;i++){
+                        if($scope.data[i]._id==list){
+                            for (var o=0;o<$scope.data[i].subType.length;o++){
+                                if($scope.data[i].subType[o].id==point){
+                                    for (var p=0;p<$scope.data[i].subType[o].state.length;p++){
+                                        if($scope.data[i].subType[o].state[p].id==state){
+                                            for(var q=0;q<$scope.data[i].subType[o].state[p].para.lenght;q++){
+                                                if($scope.data[i].subType[o].state[p].para[q].id==para){
+                                                    removeIndex=q;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            $scope.data[i].subType[o].state[p].para.splice(removeIndex,1);
+                            socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
+                        }
+                    }
+                }
             }]);
 
         </script>
