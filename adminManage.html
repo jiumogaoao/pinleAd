@@ -56,10 +56,10 @@
             <div id="main">
             	<button ng-click="add()" class="add">+添加</button>
                 <div class="list">
-                    <div class="point" ng-repeat="n in data" pid="{{n._id}}">
+                    <div class="point" ng-repeat="n in data track by $index" pid="{{n._id}}">
                         <input ng-model="n.name" ng-blur="change(n._id)"/>
                         <select ng-model="n.type" ng-change="change(n._id)">
-                            <option ng-repeat="t in config.adminType" value="{{$index}}">{{t}}</option>
+                            <option ng-repeat="t in config.adminType track by $index" value="{{$index}}">{{t}}</option>
                         </select>
                         <button ng-click="remove(n._id)">x</button>
                         <div class="clear"></div>

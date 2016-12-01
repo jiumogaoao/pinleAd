@@ -18,11 +18,11 @@
                 <input id="versionNow" ng-model="version"/>
                 <button id="changeVersion" ng-click="changeVersion()">设置版本号</button>
                 <button id="addConfig" ng-click="addConfig()">添加配置版本+</button>
-                <div class="config" ng-repeat="list in data" cid="{{list._id}}">
+                <div class="config" ng-repeat="list in data track by $index" cid="{{list._id}}">
                     <input class="version" ng-model="list.version" ng-blur="changeConfig(list._id)"/>
                     <div class="list">
                         <button class="add" ng-click="adminTypeAdd(list._id)">添加管理员类型</button>
-                        <div class="point" ng-repeat="adminType in list.adminType">
+                        <div class="point" ng-repeat="adminType in list.adminType track by $index">
                            <input ng-model="adminType" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="adminTypeRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
@@ -30,7 +30,7 @@
                     </div>
                     <div class="list">
                         <button class="add" ng-click="expressAdd(list._id)">添加物流</button>
-                        <div class="point" ng-repeat="express in list.expressID">
+                        <div class="point" ng-repeat="express in list.expressID track by $index">
                            <input ng-model="express.name" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="expressRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
@@ -38,7 +38,7 @@
                     </div>
                     <div class="list">
                         <button class="add" ng-click="expressStateAdd(list._id)">添加物流状态</button>
-                        <div class="point" ng-repeat="expressState in list.expressState">
+                        <div class="point" ng-repeat="expressState in list.expressState track by $index">
                            <input ng-model="expressState" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="expressStateRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
@@ -46,7 +46,7 @@
                     </div>
                     <div class="list">
                         <button class="add" ng-click="userAdd(list._id)">添加用户类型</button>
-                        <div class="point" ng-repeat="user in list.userType">
+                        <div class="point" ng-repeat="user in list.userType track by $index">
                            <input ng-model="user" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="userRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
@@ -73,7 +73,7 @@
                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
                 },300);
                 //socket
-                var socket = io("http://127.0.0.1:8888");
+                var socket = io("http://192.168.1.105:8888");
                 socket.on('connected', function (data) {
 		            console.log(data);
 		            if(localStorage.getItem('tk')){

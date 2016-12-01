@@ -9,36 +9,171 @@
                                 <script type="text/javascript" src="js/angular.min.js"></script>
                                 <script type="text/javascript" src="js/angular-touch.min.js"></script>
                                 <style type="text/css">
-                                		
+                                	#addType{
+                                        width: 700px;
+                                        height: 100px;
+                                        margin: auto;
+                                        text-align: center;
+                                        background-color: blue;
+                                        color: #fff;
+                                        font-size: 32px;
+                                        line-height: 100px;
+                                    }
+                                    .list{
+                                        width: 700px;
+                                        margin: auto;
+                                        position: relative;
+                                        margin-top:20px;
+                                        background-color: #fff; 
+                                    }
+                                    .remove{
+                                        position: absolute;
+                                        top: 20px;
+                                        right: 20px;
+                                        font-size: 32px;
+                                    }
+                                    .left{
+                                        float: left;
+                                        width: 200px;
+                                        height: 200px; 
+                                    }
+                                    .right{
+                                        float: left;
+                                        width: 500px;
+                                        height: 200px;
+                                    }
+                                    .right .title{
+                                        width: 500px;
+                                        height: 100px;
+                                        line-height: 100px;
+                                    }
+                                    .right .dsc{
+                                        width: 500px;
+                                        height: 200px;
+                                    }
+                                    .addSubType{
+                                        width: 700px;
+                                        height: 100px;
+                                        background-color: green;
+                                        color: #fff;
+                                        font-size: 32px;
+                                        text-align: center;
+                                        line-height: 100px;
+                                    }
+                                    .point{
+                                        width: 700px;
+                                        border-bottom:1px solid #ddd; 
+                                        position: relative;
+                                    }
+                                    .subTitle{
+                                        width: 700px;
+                                        height: 100px;
+                                        line-height: 100px;
+                                        text-align: center;
+                                    }
+                                    .subDsc{
+                                        width: 700px;
+                                        height: 200px;
+                                    }
+                                    .addState{
+                                        width: 700px;
+                                        height: 100px;
+                                        margin: auto;
+                                        text-align: center;
+                                        background-color: red;
+                                        color: #fff;
+                                        font-size: 32px;
+                                        line-height: 100px;
+                                    }
+                                    .removeSubType{
+                                        position: absolute;
+                                        top: 20px;
+                                        right: 20px;
+                                        font-size: 32px;
+                                    }
+                                    .addState{
+                                        width: 700px;
+                                        height: 100px;
+                                        margin: auto;
+                                        text-align: center;
+                                        background-color: yellow;
+                                        color: #fff;
+                                        font-size: 32px;
+                                        line-height: 100px;
+                                    }
+                                    .state{
+                                        width: 700px;
+                                        position: relative;
+                                    }
+                                    .stateTitle{
+                                        width: 700px;
+                                        height: 100px;
+                                        font-size: 32px;
+                                        line-height: 100px;
+                                        text-align: center;
+                                    }
+                                    .removeState{
+                                        position: absolute;
+                                        top: 20px;
+                                        right: 20px;
+                                        font-size: 32px;
+                                    }
+                                    .parameter{
+                                        position: relative;
+                                    }
+                                    .parameterAdd{
+                                        width: 700px;
+                                        height: 100px;
+                                        margin: auto;
+                                        text-align: center;
+                                        background-color: red;
+                                        color: #fff;
+                                        font-size: 32px;
+                                        line-height: 100px;
+                                    }
+
+                                    .parameterTitle{
+                                        width: 700px;
+                                        height: 100px;
+                                        font-size: 32px;
+                                        line-height: 100px;
+                                        text-align: center;
+                                    }
+                                    .removeParameter{
+                                        position: absolute;
+                                        top: 20px;
+                                        right: 20px;
+                                        font-size: 32px;
+                                    }
                                 </style>
     </head>
     <body style="height: {{getH}}px;">
         <div id="all" style="-webkit-transform:scale({{scale}});transform:scale({{scale}});">
             <div id="main">
             	<button id="addType" ng-click="addType()">添加分类+</button>
-                <div class="list" ng-repeat="list in data" lid="{{list._id}}">
+                <div class="list" ng-repeat="list in data track by $index" lid="{{list._id}}">
                     <button class="remove" ng-click="removeList(list._id)">X</button>
                     <div class="top">
-                        <img ng-src="list.icon"/>
+                        <img ng-src="list.icon" class="left"/>
                         <div class="right">
-                            <input class="title" ng-model="list.name" ng-blur="changeList(list._id)"/>
-                            <textarea ng-model="list.dsc" ng-blur="changeList(list._id)"></textarea>
+                            <input class="title" ng-model="list.name" ng-blur="changeList(list._id)" placeholder="title" />
+                            <textarea ng-model="list.dsc" ng-blur="changeList(list._id)" class="dsc" placeholder="dsc"></textarea>
                         </div>
                         <div class="clear"></div>
                     </div>
                     <div class="bottom">
                         <button class="addSubType" ng-click="addSubType(list._id)">添加子类+</button>
-                        <div class="point" ng-repeat="point in list.subType" lid="{{point.id}}">
-                            <input class="subTitle" ng-model="point.name" ng-blur="changeList(list._id)"/>
-                            <textarea ng-model="point.dsc" ng-blur="changeList(list._id)"></textarea>
+                        <div class="point" ng-repeat="point in list.subType track by $index" lid="{{point.id}}">
+                            <input class="subTitle" ng-model="point.name" ng-blur="changeList(list._id)" placeholder="subTitle" />
+                            <textarea ng-model="point.dsc" ng-blur="changeList(list._id)" placeholder="subdsc" class="subDsc"></textarea>
                             <div class="stateList">
                                 <button class="addState" ng-click="addState(list._id,point.id)">添加属性+</button>
-                                <div class="state" ng-repeat="state in point.state">
-                                    <input class="stateTitle" ng-model="state.title" ng-blur="changeList(list._id)"/>
+                                <div class="state" ng-repeat="state in point.state track by $index">
+                                    <input class="stateTitle" ng-model="state.title" ng-blur="changeList(list._id)" placeholder="stateTitle" />
                                     <div class="parameterList">
                                         <button class="parameterAdd" ng-click="addPara(list._id,point.id,state.id)">添加参数+</button>
-                                        <div class="parameter" ng-repeat="para in state.para">
-                                            <input ng-model="para.name" ng-blur="changeList(list._id)"/>
+                                        <div class="parameter" ng-repeat="para in state.para track by $index">
+                                            <input ng-model="para.name" ng-blur="changeList(list._id)" class="parameterTitle" placeholder="paraTitle" />
                                             <button class="removeParameter" ng-click="removePara(list._id,point.id,state.id,para.id)">X</button>
                                             <div class="clear"></div>
                                         </div>
@@ -58,18 +193,21 @@
             angular.module('app', []).controller('controller', ['$scope','$window','$timeout',function($scope,$window,$timeout) {
                 //自适应用
                 $scope.scale = $window.innerWidth/750;
+                function setH(){
+                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale;
+                };
                 $window.onresize=function(){
                    $scope.scale = $window.innerWidth/750;
-                    $scope.getH = document.getElementById('all').clientHeight*$scope.scale;
+                    setH();
                     $scope.$apply();
                 }
                 //数据
                 $scope.data=[];
                 $timeout(function(){
-                   $scope.getH = document.getElementById('all').clientHeight*$scope.scale; 
+                   setH(); 
                 },300);
                 //socket
-                var socket = io("http://127.0.0.1:8888");
+                var socket = io("http://192.168.1.105:8888");
                 socket.on('connected', function (data) {
 		            console.log(data);
 		            if(localStorage.getItem('tk')){
@@ -86,6 +224,7 @@
                 socket.on('type',function(data){
                     $scope.data=data;
                     $scope.$apply();
+                    setH();
                 })
 		        socket.on('err',function(data){
 		            alert(data.errDsc);
@@ -93,6 +232,7 @@
                 socket.on('typeAdd',function(data){
                     $scope.data.push(data);
                     $scope.$apply();
+                    setH();
                 })
                 socket.on('typeRemove',function(data){
                     var removeNum=0;
@@ -101,12 +241,14 @@
                     }
                     $scope.data.splice(removeNum,1);
                     $scope.$apply();
+                    setH();
                 })
                 socket.on('typeChange',function(data){
                     for (var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]._id==data._id){
                             $scope.data[i]=data;
                             $scope.$apply();
+                            setH();
                         }
                     }
                 });
@@ -158,6 +300,7 @@
                                     $scope.data[i].subType[o].state.push({id:"id"+(new Date().getTime()),title:"",para:[]});
                                 }
                             }
+
                             socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
                         }
                     }
