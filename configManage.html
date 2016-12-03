@@ -9,7 +9,60 @@
                                 <script type="text/javascript" src="js/angular.min.js"></script>
                                 <script type="text/javascript" src="js/angular-touch.min.js"></script>
                                 <style type="text/css">
-                                		
+                                		#versionNow,.version,.point input{
+											width:700px;
+											height:100px;
+											line-height:100px;
+											text-align:center;
+											font-size:32px;
+											display:block;
+											margin:auto;
+											background-color:#fff;
+											}
+										#changeVersion{
+											 width: 700px;
+											height: 100px;
+											background-color: red;
+											color: #fff;
+											font-size: 32px;
+											text-align: center;
+											line-height: 100px;
+											margin:auto;
+											}
+										#addConfig{
+											width: 700px;
+											height: 100px;
+											background-color: blue;
+											color: #fff;
+											font-size: 32px;
+											text-align: center;
+											line-height: 100px;
+											margin:auto;
+											}
+										.config{
+											margin-bottom:100px;}
+										.add{
+											width: 700px;
+											height: 100px;
+											background-color: green;
+											color: #fff;
+											font-size: 32px;
+											text-align: center;
+											line-height: 100px;
+											margin:auto;
+											}
+										.point{
+											width: 700px;
+											margin:auto;
+											position:relative;
+											margin-bottom:10px;
+											}
+										.remove{
+											position:absolute;
+											top:20px;
+											right:20px;
+											font-size:32px;
+											}
                                 </style>
     </head>
     <body style="height: {{getH}}px;">
@@ -23,7 +76,7 @@
                     <div class="list">
                         <button class="add" ng-click="adminTypeAdd(list._id)">添加管理员类型</button>
                         <div class="point" ng-repeat="adminType in list.adminType track by $index">
-                           <input ng-model="adminType" ng-blur="changeConfig(list._id)"/>
+                           <input ng-model="adminType.name" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="adminTypeRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
                         </div>
@@ -31,7 +84,7 @@
                     <div class="list">
                         <button class="add" ng-click="expressAdd(list._id)">添加物流</button>
                         <div class="point" ng-repeat="express in list.expressID track by $index">
-                           <input ng-model="express.name" ng-blur="changeConfig(list._id)"/>
+                           <input ng-model="express.name" ng-blur="changeConfig(list._id,express.id)"/>
                            <button class="remove" ng-click="expressRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
                         </div>
@@ -39,7 +92,7 @@
                     <div class="list">
                         <button class="add" ng-click="expressStateAdd(list._id)">添加物流状态</button>
                         <div class="point" ng-repeat="expressState in list.expressState track by $index">
-                           <input ng-model="expressState" ng-blur="changeConfig(list._id)"/>
+                           <input ng-model="expressState.name" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="expressStateRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
                         </div>
@@ -47,7 +100,7 @@
                     <div class="list">
                         <button class="add" ng-click="userAdd(list._id)">添加用户类型</button>
                         <div class="point" ng-repeat="user in list.userType track by $index">
-                           <input ng-model="user" ng-blur="changeConfig(list._id)"/>
+                           <input ng-model="user.name" ng-blur="changeConfig(list._id)"/>
                            <button class="remove" ng-click="userRemove(list._id,$index)">X</button>
                            <div class="clear"></div> 
                         </div>
@@ -134,7 +187,7 @@
                 $scope.adminTypeAdd=function(id){
                     for (var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]._id==id){
-                            $scope.data[i].adminType.push("new");
+                            $scope.data[i].adminType.push({name:"new"});
                             socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
                         }
                     }
@@ -150,7 +203,7 @@
                 $scope.expressStateAdd=function(id){
                     for (var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]._id==id){
-                            $scope.data[i].expressState.push("new");
+                            $scope.data[i].expressState.push({name:"new"});
                             socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
                         }
                     }
@@ -158,7 +211,7 @@
                 $scope.userAdd=function(id){
                     for (var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]._id==id){
-                            $scope.data[i].userType.push("new");
+                            $scope.data[i].userType.push({name:"new"});
                             socket.emit('server',{model:'config',action:'change',data:$scope.data[i]});
                         }
                     }

@@ -40,16 +40,19 @@
                                     .right{
                                         float: left;
                                         width: 500px;
-                                        height: 200px;
                                     }
                                     .right .title{
                                         width: 500px;
                                         height: 100px;
                                         line-height: 100px;
+										font-size:32px;
+										text-align:center;
                                     }
                                     .right .dsc{
                                         width: 500px;
                                         height: 200px;
+										padding:10px;
+										font-size:32px;
                                     }
                                     .addSubType{
                                         width: 700px;
@@ -70,10 +73,13 @@
                                         height: 100px;
                                         line-height: 100px;
                                         text-align: center;
+										font-size:32px;
                                     }
                                     .subDsc{
                                         width: 700px;
                                         height: 200px;
+										padding:10px;
+										font-size:32px;
                                     }
                                     .addState{
                                         width: 700px;
@@ -306,19 +312,17 @@
                     }
                 }
                 $scope.removeState=function(list,point,state){
-                    var removeIndex=0;
                     for (var i=0;i<$scope.data.length;i++){
                         if($scope.data[i]._id==list){
                             for (var o=0;o<$scope.data[i].subType.length;o++){
                                 if($scope.data[i].subType[o].id==point){
                                     for (var p=0;p<$scope.data[i].subType[o].state.length;p++){
                                         if($scope.data[i].subType[o].state[p].id==state){
-                                            removeIndex=p;
+                                            $scope.data[i].subType[o].state.splice(p,1);
                                         }
                                     }   
                                 }
                             }
-                            $scope.data[i].subType[o].state.splice(removeIndex,1);
                             socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
                         }
                     }
@@ -347,16 +351,15 @@
                                 if($scope.data[i].subType[o].id==point){
                                     for (var p=0;p<$scope.data[i].subType[o].state.length;p++){
                                         if($scope.data[i].subType[o].state[p].id==state){
-                                            for(var q=0;q<$scope.data[i].subType[o].state[p].para.lenght;q++){
+                                            for(var q=0;q<$scope.data[i].subType[o].state[p].para.length;q++){
                                                 if($scope.data[i].subType[o].state[p].para[q].id==para){
-                                                    removeIndex=q;
+                                                     $scope.data[i].subType[o].state[p].para.splice(q,1);
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                            $scope.data[i].subType[o].state[p].para.splice(removeIndex,1);
                             socket.emit('server',{model:'type',action:'change',data:$scope.data[i]});
                         }
                     }
